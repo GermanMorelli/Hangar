@@ -1,0 +1,7 @@
+data/
+node_modules/
+dist/
+# personal welcome animation: stays on this machine, not in the repo or the installer
+shell/welcome.ps1
+shell/welcome.txt
+shell/make-welcome.js

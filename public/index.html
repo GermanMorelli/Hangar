@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="hangar-token" content="__HANGAR_TOKEN__">
+  <title>Hangar</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="icon" href="icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="icon-512.png">
+  <link rel="stylesheet" href="vendor/xterm.css">
+  <link rel="stylesheet" href="styles.css">
+  <link id="gfonts" rel="stylesheet">
+  <style id="custom-css"></style>
+</head>
+<body>
+  <div id="bg-layer"><img id="bg-img" class="bg-media" alt="" hidden><video id="bg-video" class="bg-media" muted loop playsinline hidden></video></div>
+  <div id="app">
+    <aside id="tabs-panel" aria-label="Tabs">
+      <div class="panel-head">
+        <div class="brand"><svg class="brand-mark" viewBox="70 60 404 354" aria-hidden="true"><g fill="none" stroke-width="52"><path class="rib rib0" d="M106 404V292A150 150 0 0 1 406 292V404" style="stroke:var(--ansi-13)" stroke-dasharray="200.25 1390.48" stroke-dashoffset="0"/><path class="rib rib1" d="M106 404V292A150 150 0 0 1 406 292V404" style="stroke:var(--ansi-1)" stroke-dasharray="82.25 1390.48" stroke-dashoffset="-212.25"/><path class="rib rib2" d="M106 404V292A150 150 0 0 1 406 292V404" style="stroke:var(--ansi-11)" stroke-dasharray="82.25 1390.48" stroke-dashoffset="-306.5"/><path class="rib rib3" d="M106 404V292A150 150 0 0 1 406 292V404" style="stroke:var(--ansi-10)" stroke-dasharray="82.25 1390.48" stroke-dashoffset="-400.74"/><path class="rib rib4" d="M106 404V292A150 150 0 0 1 406 292V404" style="stroke:var(--accent)" stroke-dasharray="200.25 1390.48" stroke-dashoffset="-494.99"/></g><g fill="none" style="stroke:var(--fg)" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"><path class="chev" d="M198 264L250 305L198 346"/><path class="cursor" d="M276 346H328"/></g><path class="spark" style="fill:var(--fg)" d="M420 66Q420 104 458 104Q420 104 420 142Q420 104 382 104Q420 104 420 66Z"/></svg><span>Hangar</span></div>
+        <div class="panel-actions">
+          <button id="view-toggle" class="icon-btn" title="Compact / expanded (Alt+V)"></button>
+          <button id="new-tab" class="icon-btn" title="New tab (Alt+T) · right-click to pick a shell"></button>
+        </div>
+      </div>
+      <div class="tab-search-wrap"><input id="tab-search" placeholder="Filter tabs…" spellcheck="false"></div>
+      <div id="tab-list" role="tablist"></div>
+      <div id="corral-tabs" class="corral-wrap"></div>
+      <div id="external-wrap">
+        <div class="section-label">Claude Code · live</div>
+        <div id="external-list"></div>
+      </div>
+      <div id="usage-bar" hidden></div>
+      <div class="panel-foot">
+        <button id="open-settings" class="foot-btn"><span class="ico" data-icon="gear"></span>Settings <kbd>Ctrl+,</kbd></button>
+      </div>
+      <div id="panel-resizer" title="Drag to resize"></div>
+    </aside>
+
+    <main id="pane">
+      <header id="pane-head">
+        <button id="toggle-panel" class="icon-btn" title="Toggle tabs (Ctrl+B)"></button>
+        <div id="pane-title"></div>
+        <div id="pane-meta"></div>
+        <div class="pane-actions">
+          <div id="mode-seg" class="seg" role="tablist" title="Ctrl+I">
+            <button data-mode="terminal">Terminal</button><button data-mode="agent">Claude agent</button>
+          </div>
+          <button id="files-btn" class="icon-btn" title="Files (Ctrl+Shift+E)"></button>
+          <button id="find-btn" class="icon-btn" title="Find in terminal (Ctrl+Shift+F)"></button>
+          <button id="clear-btn" class="ghost-btn" title="Clear">Clear</button>
+        </div>
+      </header>
+      <div id="cli-toolbar"></div>
+      <div id="terms">
+        <div id="search-bar" hidden>
+          <input id="search-input" placeholder="Find…" spellcheck="false">
+          <span id="search-count"></span>
+          <button id="search-case" class="tgl" title="Match case">Aa</button>
+          <button id="search-regex" class="tgl" title="Regular expression">.*</button>
+          <button id="search-prev" class="icon-btn" title="Previous (Shift+Enter)"></button>
+          <button id="search-next" class="icon-btn" title="Next (Enter)"></button>
+          <button id="search-close" class="icon-btn" title="Close (Esc)"></button>
+        </div>
+      </div>
+      <div id="blocks" tabindex="-1"></div>
+      <div id="corral-pane" class="corral-wrap"></div>
+      <div id="input-wrap">
+        <div id="agent-toolbar"><div class="tb-side tb-left"></div><div class="tb-side tb-right"></div></div>
+        <div class="input-row">
+          <button id="mode-btn" class="mode-pill" title="Back to the terminal (Ctrl+I)"></button>
+          <div class="editor"><textarea id="input" rows="1" spellcheck="false" autocomplete="off" autocapitalize="off"></textarea></div>
+          <button id="run-btn" class="run-btn" title="Send (Enter)"></button>
+        </div>
+      </div>
+    </main>
+
+    <aside id="files" hidden tabindex="-1" aria-label="Files">
+      <div class="files-head">
+        <button id="files-up" class="icon-btn" title="Up a folder"></button>
+        <input id="files-path" spellcheck="false">
+        <button id="files-refresh" class="icon-btn" title="Refresh"></button>
+        <button id="files-git" class="icon-btn" title="Git: changes and commit"></button>
+        <button id="files-hidden" class="icon-btn" title="Show hidden files"></button>
+        <button id="close-files" class="icon-btn" title="Close (Esc)"></button>
+      </div>
+      <div class="files-body">
+        <div id="files-list"></div>
+        <div id="files-preview"><div class="files-empty">Select a file to preview</div></div>
+      </div>
+    </aside>
+
+    <aside id="settings" hidden aria-label="Settings">
+      <div class="settings-head">
+        <h2>Settings</h2>
+        <input id="settings-search" placeholder="Search settings…" spellcheck="false">
+        <button id="close-settings" class="icon-btn" title="Close (Esc)"></button>
+      </div>
+      <nav id="settings-nav"></nav>
+      <div id="settings-body"></div>
+    </aside>
+  </div>
+
+  <div id="toasts"></div>
+  <div id="menu" class="popup" hidden></div>
+  <div id="hovercard" class="popup" hidden></div>
+  <div id="cmd-menu" class="popup" hidden></div>
+  <input id="file-input" type="file" hidden>
+
+  <script src="vendor/xterm.js"></script>
+  <script src="vendor/addon-webgl.js"></script>
+  <script src="vendor/addon-fit.js"></script>
+  <script src="vendor/addon-search.js"></script>
+  <script src="vendor/addon-web-links.js"></script>
+  <script src="vendor/addon-unicode11.js"></script>
+  <script src="vendor/hljs.js"></script>
+  <script src="vendor/hljs-powershell.js"></script>
+  <script src="vendor/hljs-dockerfile.js"></script>
+  <script src="settings.js"></script>
+  <script src="clawd.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
